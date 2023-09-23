@@ -1,0 +1,8 @@
+[config]
+
+name="GodotAdjust"
+binary_type="local"
+binary="GodotAdjust.0.1.0.release.aar"
+
+[dependencies]
+remote=["com.adjust.sdk:adjust-android:4.33.5", "com.android.installreferrer:installreferrer:2.2", "com.google.android.gms:play-services-ads-identifier:18.0.1"]

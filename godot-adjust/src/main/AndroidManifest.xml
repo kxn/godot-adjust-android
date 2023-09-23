@@ -1,0 +1,11 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="org.comman.godot.plugin.adjust">
+
+    <application>
+
+        <meta-data
+            android:name="org.godotengine.plugin.v1.GodotAdjust"
+            android:value="org.comman.godot.plugin.adjust.GodotAdjust" />
+
+    </application>
+</manifest>

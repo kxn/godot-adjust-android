@@ -1,0 +1,2 @@
+include ':godot-adjust'
+rootProject.name = "Godot Adjust"
