@@ -12,6 +12,7 @@ import androidx.collection.ArraySet;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import com.adjust.sdk.Adjust;
@@ -22,6 +23,8 @@ import com.adjust.sdk.OnAttributionChangedListener;
 
 public class GodotAdjust extends GodotPlugin implements OnAttributionChangedListener  {
 
+	private boolean pendingResume = false;
+	private boolean initAdjustCalled = false;
 	public GodotAdjust(Godot godot) {
 		super(godot);
 	}
@@ -32,14 +35,28 @@ public class GodotAdjust extends GodotPlugin implements OnAttributionChangedList
 	}
 
 	@Override
-	public void onMainResume() {
+	public void onMainResume()
+	{
+		if (!initAdjustCalled) {
+			pendingResume = true;
+			return;
+		}
 		Adjust.onResume();
 	}
 
 	@UsedByGodot
 	public void initAdjust(String appToken, String environment) {
+		if (initAdjustCalled) {
+			return;
+		}
 		AdjustConfig config = new AdjustConfig(getActivity(), appToken, environment);
+		config.setOnAttributionChangedListener(this);
 		Adjust.onCreate(config);
+		initAdjustCalled = true;
+		if (pendingResume) {
+			pendingResume = false;
+			Adjust.onResume();
+		}
 	}
 
 
@@ -68,7 +85,7 @@ public class GodotAdjust extends GodotPlugin implements OnAttributionChangedList
 	@UsedByGodot
 	public void trackEvent(String eventId, String orderId) {
 		AdjustEvent adjustEvent = new AdjustEvent(eventId);
-		if (orderId != null)
+		if (!Objects.equals(orderId, ""))
 			adjustEvent.setOrderId(orderId);
 		Adjust.trackEvent(adjustEvent);
 	}
@@ -77,7 +94,7 @@ public class GodotAdjust extends GodotPlugin implements OnAttributionChangedList
 	public void trackRevenue(String eventId, double revenue, String currency, String orderId) {
 		AdjustEvent adjustEvent = new AdjustEvent(eventId);
 		adjustEvent.setRevenue(revenue,currency);
-		if (orderId != null)
+		if (!Objects.equals(orderId, ""))
 			adjustEvent.setOrderId(orderId);
 		Adjust.trackEvent(adjustEvent);
 	}
